@@ -38,15 +38,20 @@ async function checkPair(args) {
 
   const uniswapResult = await exchangeContract.methods.getEthToTokenInputPrice(inputAmount).call()
   let kyberResult = await kyberRateContract.methods.getExpectedRate(inputTokenAddress, outputTokenAddress, inputAmount).call()
-
+  if( (web3.utils.fromWei(kyberResult.worstRate, 'Ether') - web3.utils.fromWei(uniswapResult, 'Ether') ) > 1){
+    
   console.table([{
+    'Timestamp': moment().tz('America/Chicago').format(),
+    'Sell On Kyber': 'true',
+    
     'Input Token': inputTokenSymbol,
     'Output Token': outputTokenSymbol,
     'Input Amount': web3.utils.fromWei(inputAmount, 'Ether'),
     'Uniswap Return': web3.utils.fromWei(uniswapResult, 'Ether'),
     'Kyber Expected Rate': web3.utils.fromWei(kyberResult.expectedRate, 'Ether'),
     'Kyber Min Return': web3.utils.fromWei(kyberResult.worstRate, 'Ether'),
-    'Timestamp': moment().tz('America/Chicago').format(),
+    
+    
   }])
 }
 
